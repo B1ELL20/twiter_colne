@@ -10,18 +10,32 @@ class IndexController extends Action {
 
 	public function index() {
 
+
+		if(isset($_GET['login'])) {
+			$this->view->login = $_GET['login'];
+		} else {
+			$this->view->login = '';
+		}
+
 		$this->render('index');
+		
 	}
 
 	public function inscreverse() {
 
+		$this->view->usuario = array(
+			'nome' => '',
+			'email' => '',
+			'senha' => ''
+
+		);
+
+		$this->view->errocadastro = false;
 		$this->render('inscreverse');
+		
 	}
 
 	public function registrar() {
-		echo '<pre>';
-		print_r($_POST);
-		echo '</pre>';
 
 		$usuario = Container::getModel('usuario');
 
@@ -29,12 +43,21 @@ class IndexController extends Action {
 		$usuario->__set('email', $_POST['email']);
 		$usuario->__set('senha', $_POST['senha']);
 
-		if ($usuario->validarCadastro() && count($usuario->getUsusarioEmail()) == 0) {
+		if ($usuario->validarCadastro() && count($usuario->getUsuarioEmail()) == 0) {
 
 			$usuario->salvar();
 			$this->render('cadastro');
 		
 		} else {
+
+			$this->view->usuario = array(
+				'nome' => $_POST['nome'],
+				'email' => $_POST['email'],
+				'senha' => $_POST['senha']
+
+			);
+
+			$this->view->errocadastro = true;
 			
 			$this->render('inscreverse');
 		}
